@@ -1,1 +1,22 @@
-.venv
+# Virtual environment
+.venv/
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Logs
+logs/
+*.log
+
+# MLflow
+mlruns/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
