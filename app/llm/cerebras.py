@@ -82,7 +82,8 @@ class CerebrasLLM(BaseLLM):
         except LLMError:
             raise
 
-        except Exception as exc:
-            raise LLMError(
-                "Failed to generate response."
-            ) from exc
+        except Exception:
+            import traceback
+
+            traceback.print_exc()
+            raise
