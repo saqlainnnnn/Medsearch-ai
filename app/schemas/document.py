@@ -137,3 +137,21 @@ class Chunk(BaseModel):
         ge=0,
         description="Estimated token count."
     )
+
+class EmbeddedChunk(BaseModel):
+    """
+    Represents a chunk together with its embedding vector.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    chunk: Chunk = Field(
+        ...,
+        description="Original chunk."
+    )
+
+    embedding: list[float] = Field(
+        ...,
+        min_length=1,
+        description="Dense vector representation of the chunk."
+    )

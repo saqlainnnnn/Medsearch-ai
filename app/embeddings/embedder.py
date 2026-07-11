@@ -1,0 +1,87 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
+
+from sentence_transformers import SentenceTransformer
+
+from app.embeddings.base import BaseEmbedder
+from app.embeddings.exceptions import EmbeddingError
+from app.schemas.document import Chunk, EmbeddedChunk
+
+
+class SentenceTransformerEmbedder(BaseEmbedder):
+    """
+    Generates dense embeddings using a SentenceTransformer model.
+    """
+
+    def __init__(
+        self,
+        model_name: str = "BAAI/bge-small-en-v1.5",
+    ) -> None:
+        """
+        Initialize the embedding model.
+
+        Parameters
+        ----------
+        model_name : str
+            HuggingFace SentenceTransformer model.
+        """
+
+        try:
+            self._model = SentenceTransformer(model_name)
+        except Exception as exc:
+            raise EmbeddingError(
+                f"Failed to load embedding model: {model_name}"
+            ) from exc
+
+    def embed(
+        self,
+        chunks: Sequence[Chunk],
+    ) -> list[EmbeddedChunk]:
+        """
+        Generate embeddings for chunks.
+
+        Parameters
+        ----------
+        chunks : Sequence[Chunk]
+            Chunks to embed.
+
+        Returns
+        -------
+        list[EmbeddedChunk]
+            Embedded chunks.
+
+        Raises
+        ------
+        EmbeddingError
+            If embedding generation fails.
+        """
+
+        try:
+            texts = [
+                chunk.content
+                for chunk in chunks
+            ]
+
+            embeddings = self._model.encode(
+                texts,
+                convert_to_numpy=True,
+                show_progress_bar=False,
+            )
+
+            return [
+                EmbeddedChunk(
+                    chunk=chunk,
+                    embedding=embedding.tolist(),
+                )
+                for chunk, embedding in zip(
+                    chunks,
+                    embeddings,
+                    strict=True,
+                )
+            ]
+
+        except Exception as exc:
+            raise EmbeddingError(
+                "Failed to generate embeddings."
+            ) from exc
