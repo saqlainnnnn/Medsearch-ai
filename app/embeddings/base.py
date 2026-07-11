@@ -20,3 +20,13 @@ class BaseEmbedder(ABC):
         Generate embeddings for document chunks.
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def embed_query(
+        self,
+        query: str,
+    ) -> list[float]:
+        """
+        Generate an embedding for a search query.
+        """
+        raise NotImplementedError

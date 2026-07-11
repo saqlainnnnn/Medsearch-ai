@@ -26,7 +26,6 @@ class SentenceTransformerEmbedder(BaseEmbedder):
         model_name : str
             HuggingFace SentenceTransformer model.
         """
-
         try:
             self._model = SentenceTransformer(model_name)
         except Exception as exc:
@@ -39,7 +38,7 @@ class SentenceTransformerEmbedder(BaseEmbedder):
         chunks: Sequence[Chunk],
     ) -> list[EmbeddedChunk]:
         """
-        Generate embeddings for chunks.
+        Generate embeddings for document chunks.
 
         Parameters
         ----------
@@ -56,7 +55,6 @@ class SentenceTransformerEmbedder(BaseEmbedder):
         EmbeddingError
             If embedding generation fails.
         """
-
         try:
             texts = [
                 chunk.content
@@ -66,6 +64,7 @@ class SentenceTransformerEmbedder(BaseEmbedder):
             embeddings = self._model.encode(
                 texts,
                 convert_to_numpy=True,
+                normalize_embeddings=True,
                 show_progress_bar=False,
             )
 
@@ -84,4 +83,46 @@ class SentenceTransformerEmbedder(BaseEmbedder):
         except Exception as exc:
             raise EmbeddingError(
                 "Failed to generate embeddings."
+            ) from exc
+
+    def embed_query(
+        self,
+        query: str,
+    ) -> list[float]:
+        """
+        Generate an embedding for a search query.
+
+        Parameters
+        ----------
+        query : str
+            User search query.
+
+        Returns
+        -------
+        list[float]
+            Query embedding.
+
+        Raises
+        ------
+        EmbeddingError
+            If embedding generation fails.
+        """
+        try:
+            formatted_query = (
+                "Represent this sentence for searching "
+                f"relevant passages: {query}"
+            )
+
+            embedding = self._model.encode(
+                formatted_query,
+                convert_to_numpy=True,
+                normalize_embeddings=True,
+                show_progress_bar=False,
+            )
+
+            return embedding.tolist()
+
+        except Exception as exc:
+            raise EmbeddingError(
+                "Failed to generate query embedding."
             ) from exc
