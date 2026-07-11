@@ -66,3 +66,15 @@ class RetrievalPipeline:
             retriever=RetrieverType.HYBRID,
             latency_ms=latency_ms,
         )
+    
+    def build(
+        self,
+        embedded_chunks: list[EmbeddedChunk],
+    ) -> None:
+        """
+        Build all retrieval indexes.
+        """
+
+        self._hybrid_retriever.build(
+            embedded_chunks,
+        )
