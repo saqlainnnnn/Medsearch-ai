@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     # ==========================
 
     reranker_model: str = Field(
-        default="cross-encoder/ms-marco-MiniLM-L-6-v2"
+        default="BAAI/bge-reranker-base"
     )
 
     # ==========================

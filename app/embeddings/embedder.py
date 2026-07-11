@@ -7,6 +7,7 @@ from sentence_transformers import SentenceTransformer
 from app.embeddings.base import BaseEmbedder
 from app.embeddings.exceptions import EmbeddingError
 from app.schemas.document import Chunk, EmbeddedChunk
+from app.config.settings import settings
 
 
 class SentenceTransformerEmbedder(BaseEmbedder):
@@ -16,21 +17,23 @@ class SentenceTransformerEmbedder(BaseEmbedder):
 
     def __init__(
         self,
-        model_name: str = "BAAI/bge-small-en-v1.5",
+        model_name: str | None = None,
     ) -> None:
         """
         Initialize the embedding model.
 
         Parameters
         ----------
-        model_name : str
-            HuggingFace SentenceTransformer model.
+        model_name : str | None
+            Optional HuggingFace model override.
         """
         try:
-            self._model = SentenceTransformer(model_name)
+            self._model = SentenceTransformer(
+                model_name or settings.embedding_model
+            )
         except Exception as exc:
             raise EmbeddingError(
-                f"Failed to load embedding model: {model_name}"
+                "Failed to load embedding model."
             ) from exc
 
     def embed(

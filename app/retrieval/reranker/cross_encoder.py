@@ -7,7 +7,7 @@ from sentence_transformers import CrossEncoder
 from app.retrieval.reranker.base import BaseReranker
 from app.retrieval.reranker.exceptions import RerankingError
 from app.schemas.retrieval import RetrievedChunk
-
+from app.config.settings import settings
 
 class CrossEncoderReranker(BaseReranker):
     """
@@ -16,21 +16,24 @@ class CrossEncoderReranker(BaseReranker):
 
     def __init__(
         self,
-        model_name: str = "BAAI/bge-reranker-base",
+        model_name: str | None = None,
     ) -> None:
         """
         Initialize the reranker.
 
         Parameters
         ----------
-        model_name : str
-            HuggingFace Cross Encoder model.
+        model_name : str | None
+            Optional HuggingFace reranker model.
         """
         try:
-            self._model = CrossEncoder(model_name)
+            self._model = CrossEncoder(
+                model_name or settings.reranker_model
+            )
+
         except Exception as exc:
             raise RerankingError(
-                f"Failed to load reranker model: {model_name}"
+                "Failed to initialize Cross Encoder."
             ) from exc
 
     def rerank(
