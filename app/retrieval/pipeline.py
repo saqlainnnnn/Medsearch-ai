@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 
+from app.schemas.document import EmbeddedChunk
 from app.embeddings.base import BaseEmbedder
 from app.retrieval.hybrid.hybrid import HybridRetriever
 from app.schemas.retrieval import RetrievalResult, SearchQuery, RetrieverType

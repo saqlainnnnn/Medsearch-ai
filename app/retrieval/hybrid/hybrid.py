@@ -6,7 +6,7 @@ from app.retrieval.sparse.base import BaseSparseRetriever
 from app.schemas.retrieval import RetrievedChunk
 
 from collections.abc import Sequence
-
+from app.schemas.document import EmbeddedChunk
 
 
 
@@ -39,6 +39,27 @@ class HybridRetriever:
         self._dense = dense_retriever
         self._sparse = sparse_retriever
         self._rrf = rrf or ReciprocalRankFusion()
+
+    def build(
+        self,
+        embedded_chunks: list[EmbeddedChunk],
+    ) -> None:
+        """
+        Build both dense and sparse retrieval indexes.
+
+        Parameters
+        ----------
+        embedded_chunks : list[EmbeddedChunk]
+            Embedded document chunks.
+        """
+
+        self._dense.build(
+            embedded_chunks,
+        )
+
+        self._sparse.build(
+            [chunk.chunk for chunk in embedded_chunks],
+        )
 
     def search(
         self,

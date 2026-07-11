@@ -7,6 +7,7 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.document import Chunk
+from app.schemas.document import EmbeddedChunk
 
 
 class RetrieverType(str, Enum):
